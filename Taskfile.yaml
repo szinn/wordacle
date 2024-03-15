@@ -1,6 +1,14 @@
 ---
 version: 3
 
+vars:
+  PROJECT_DIR:
+    sh: 'git rev-parse --show-toplevel'
+
+includes:
+  pc:
+    taskfile: .taskfiles/pre-commit
+
 tasks:
   create-release:
     desc: Create a release
