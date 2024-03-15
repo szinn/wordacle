@@ -6,6 +6,7 @@ tasks:
     desc: Create a release
     silent: true
     cmds:
+      - task: check
       - scripts/release {{.release}}
     vars:
       release: '{{ or .release (fail "Argument (release) is required") }}'
@@ -23,3 +24,14 @@ tasks:
     cmds:
       - kubectl --context admin@staging rollout restart deployment -n self-hosted wordacle
       - kubectl --context admin@staging rollout status deployment -n self-hosted wordacle
+
+  check:
+    desc: Check code formatting / lint
+    cmds:
+      - npm run format
+      - npm run lint
+
+  dev:
+    desc: Run development server
+    cmds:
+      - npm run dev -- --open
