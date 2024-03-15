@@ -1,0 +1,67 @@
+name: Build Latest
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          fetch-depth: 1
+
+      - name: Login to GHCR
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_PASSWORD }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ghcr.io/szinn/wordacle
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      # - name: Setup workflow Variables
+      #   id: vars
+      #   shell: bash
+      #   run: |-
+      #     VERSION="latest"
+      #     if test "$GITHUB_EVENT_NAME" == "workflow_dispatch"; then
+      #       VERSION=$(cat VERSION)
+      #     fi
+      #     echo "::set-output name=version::$VERSION"
+      #     echo "::set-output name=tag_version::tesla-spy:$VERSION"
+
+      # - name: Setup QEMU
+      #   uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3.2.0
+
+      - name: Build container image
+        uses: docker/build-push-action@v5
+        with:
+          # build-args: |-
+          #   VERSION=${{ steps.vars.outputs.version }}
+          context: .
+          platforms: linux/amd64 # load does not support muti-arch https://github.com/docker/buildx/issues/290
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
