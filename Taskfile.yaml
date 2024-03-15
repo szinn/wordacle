@@ -1,0 +1,24 @@
+---
+version: 3
+
+tasks:
+  create-release:
+    desc: Create a release
+    silent: true
+    cmds:
+      - scripts/release {{.release}}
+    vars:
+      release: '{{ or .release (fail "Argument (release) is required") }}'
+
+  release:
+    desc: Push and build the release
+    silent: true
+    cmds:
+      - git push
+      - git push --tags
+
+  staging:
+    desc: Relaunch staging deployment
+    silent: true
+    cmds:
+      - kubectl --context admin@staging rollout restart deployment -n self-hosted wordacle
