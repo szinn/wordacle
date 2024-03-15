@@ -22,3 +22,4 @@ tasks:
     silent: true
     cmds:
       - kubectl --context admin@staging rollout restart deployment -n self-hosted wordacle
+      - kubectl --context admin@staging rollout status deployment -n self-hosted wordacle
