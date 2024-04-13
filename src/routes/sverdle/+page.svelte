@@ -1,7 +1,7 @@
 <script lang="ts">
+  import type { ActionData, PageData } from './$types';
   import { confetti } from '@neoconfetti/svelte';
   import { enhance } from '$app/forms';
-  import type { PageData, ActionData } from './$types';
   import { reduced_motion } from './reduced-motion';
 
   export let data: PageData;
@@ -24,7 +24,7 @@
    * A map of classnames for all letters that have been guessed,
    * used for styling the keyboard
    */
-  let classnames: Record<string, 'exact' | 'close' | 'missing'>;
+  let classnames: Record<string, 'close' | 'exact' | 'missing'>;
 
   /**
    * A map of descriptions for all letters that have been guessed,
@@ -36,7 +36,7 @@
     classnames = {};
     description = {};
 
-    data.answers.forEach((answer, i) => {
+    data.answers.forEach((answer: string[], i: number | string) => {
       const guess = data.guesses[i];
 
       for (let i = 0; i < 5; i += 1) {

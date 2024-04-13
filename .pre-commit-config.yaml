@@ -39,18 +39,18 @@ repos:
         # MD041: first line in a file should be a top-level heading
         args: [--disable, MD013, MD033, MD041, '--']
 
-  # - repo: https://github.com/pre-commit/mirrors-eslint
-  #   rev: v9.0.0
-  #   hooks:
-  #     - id: eslint
-  #       types: [file]
-  #       args: [--fix]
-  #       files: \.(js|ts|svelte)$
-  #       additional_dependencies:
-  #         - eslint
-  #         - svelte
-  #         - typescript
-  #         - eslint-plugin-svelte
-  #         - '@typescript-eslint/eslint-plugin'
-  #         - '@typescript-eslint/parser'
-  #         - svelte-eslint-parser
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.0.0
+    hooks:
+      - id: eslint
+        types: [file]
+        args: [--fix]
+        files: \.(js|ts|svelte)$
+        additional_dependencies:
+          - eslint
+          - svelte
+          - typescript
+          - eslint-plugin-svelte
+          - '@typescript-eslint/eslint-plugin'
+          - '@typescript-eslint/parser'
+          - svelte-eslint-parser

@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY package*.json .
 
-RUN npm ci
+RUN npm ci --force
 
 COPY . .
 RUN npm run build
-RUN npm prune --production
+RUN npm prune --production --force
 
 FROM node:21@sha256:162d92c5f1467ad877bf6d8a098d9b04d7303879017a2f3644bfb1de1fc88ff0 AS run
 
