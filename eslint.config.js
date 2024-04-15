@@ -1,58 +1,120 @@
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import eslintPluginSvelte from 'eslint-plugin-svelte';
-import js from '@eslint/js';
+import eslint from '@eslint/js';
+import pluginImport from 'eslint-plugin-import';
+import svelteEslint from 'eslint-plugin-svelte';
+import globals from 'globals';
 import svelteParser from 'svelte-eslint-parser';
 import tsEslint from 'typescript-eslint';
-import tsParser from '@typescript-eslint/parser';
+import jsdoc from 'eslint-plugin-jsdoc';
+import markdown from 'eslint-plugin-markdown';
 
+const testingDSL = {
+  it: 'readonly',
+  expect: 'readonly',
+  describe: 'readonly'
+};
+
+const ignores = [
+  // Sure, let's lint our lint config... :D
+  // ./eslint.config.js
+  '.DS_Store',
+  '.env',
+  '.env.*',
+  '.github',
+  // On CI our PNPM store is local to the application source
+  '.pnpm-store/**/*',
+  '.svelte-kit/**/*',
+  '.vscode',
+  'node_modules/**/*',
+  'build/**/*',
+  'package/**/*',
+
+  // Ignore files for PNPM, NPM and YARN
+  'pnpm-lock.yaml',
+  'package-lock.json',
+  'yarn.lock',
+
+  // i18n dictionaries and auto-generated data
+  'src/paraglide/**/*',
+
+  // This was imported
+  'src/routes/sverdle/**'
+];
+
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
-  js.configs.recommended,
-  ...tsEslint.configs.strict,
-  ...eslintPluginSvelte.configs['flat/recommended'],
-  eslintPluginPrettierRecommended, // must be last to override conflicting rules.
-  {
-    rules: {
-      semi: ['warn', 'always'],
-      quotes: ['warn', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
-      'no-nested-ternary': 'error',
-      'linebreak-style': ['error', 'unix'],
-      'no-cond-assign': ['error', 'always'],
-      'no-console': 'error',
-      '@typescript-eslint/sort-type-constituents': 'error',
-      'sort-imports': [
-        'error',
-        {
-          ignoreCase: true,
-          ignoreDeclarationSort: false,
-          ignoreMemberSort: false,
-          memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-          allowSeparatedGroups: true
-        }
-      ]
-    }
-  },
-  {
-    ignores: ['src/routes/sverdle/**', '.svelte-kit/**']
-  },
-  {
-    files: ['**/*.ts'],
-    languageOptions: {
-      parser: tsParser
-    }
-  },
+  { ignores },
+  ...markdown.configs.recommended,
+  eslint.configs.recommended,
+  ...tsEslint.configs.recommended,
+  ...svelteEslint.configs['flat/prettier'],
+  jsdoc.configs['flat/recommended'],
   {
     files: ['**/*.svelte'],
     languageOptions: {
       parser: svelteParser,
       parserOptions: {
-        parser: tsParser
+        parser: tsEslint.parser
+      },
+      globals: {
+        ...globals.browser
       }
+    }
+  },
+  {
+    files: ['**/*.svelte.test.ts'],
+    languageOptions: {
+      parser: svelteParser,
+      parserOptions: {
+        parser: tsEslint.parser
+      },
+      globals: {
+        ...globals.browser,
+        ...testingDSL
+      }
+    }
+  },
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parser: tsEslint.parser
+    }
+  },
+  {
+    files: ['**/*.test.ts'],
+    languageOptions: {
+      parser: tsEslint.parser,
+      globals: {
+        ...testingDSL
+      }
+    }
+  },
+  {
+    files: ['**/*server.ts'],
+    languageOptions: {
+      parser: tsEslint.parser,
+      globals: {
+        ...globals.node
+      }
+    }
+  },
+  {
+    files: ['**/*server.test.ts'],
+    languageOptions: {
+      parser: tsEslint.parser,
+      globals: {
+        ...globals.node,
+        ...testingDSL
+      }
+    }
+  },
+  {
+    plugins: {
+      '@typescript-eslint': tsEslint.plugin,
+      import: pluginImport
     },
     rules: {
-      'svelte/no-target-blank': 'error',
-      'svelte/no-at-debug-tags': 'error',
-      'svelte/no-reactive-functions': 'error',
-      'svelte/no-reactive-literals': 'error'
+      semi: 'warn',
+      'svelte/sort-attributes': 'warn'
     }
   }
 ];

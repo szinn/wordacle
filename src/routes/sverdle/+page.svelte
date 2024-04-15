@@ -36,7 +36,7 @@
     classnames = {};
     description = {};
 
-    data.answers.forEach((answer: string[], i: number | string) => {
+    data.answers.forEach((answer, i) => {
       const guess = data.guesses[i];
 
       for (let i = 0; i < 5; i += 1) {

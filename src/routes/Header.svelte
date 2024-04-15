@@ -22,7 +22,7 @@
 
   <div class="corner">
     <a href="https://github.com/szinn/wordacle">
-      <img src={github_icon} alt="Github" />
+      <img alt="Github" src={github_icon} />
     </a>
   </div>
 </header>
