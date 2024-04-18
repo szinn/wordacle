@@ -14,8 +14,8 @@ export class Query {
       this.guesses = guesses ? guesses.split(' ') : [];
       this.states = states ? states.split(' ') : [];
     } else {
-      this.guesses = ['slats', 'fists'];
-      this.states = ['/xx++', 'xxxxx', 'xxxxx', 'xxxxx'];
+      this.guesses = [];
+      this.states = [];
     }
   }
 

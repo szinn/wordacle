@@ -4,7 +4,7 @@
 
   export let data: PageData;
 
-  let index = data.guesses.length;
+  $: index = data.guesses.length;
 
   $: {
     for (let i = 0; i < data.guesses.length; i += 1) {
@@ -15,9 +15,8 @@
   }
 
   $: currentGuess = data.guesses[index] || '';
-  $: submittable = currentGuess.length % 5 == 0;
-  // $: currentState = data.states[i] || '';
-  // $: submittable = currentGuess.length === 5;
+  $: currentState = data.states[index] || '';
+  $: submittable = (index > 0 && currentGuess.length == 0) || currentGuess.length === 5;
 
   /**
    * Modify the game state without making a trip to the server,
@@ -29,8 +28,21 @@
 
     if (key === 'backspace') {
       currentGuess = currentGuess.slice(0, -1);
+      currentState = currentState.slice(0, -1);
+    } else if (key?.startsWith('guess')) {
+      const [, c] = key.split('-');
+      const column = +c;
+
+      let state = currentState[column];
+      if (state == 'x') {
+        state = '/';
+      } else {
+        state = state == '/' ? '+' : 'x';
+      }
+      currentState = currentState.substring(0, column) + state + currentState.substring(column + 1);
     } else if (currentGuess.length < 5) {
       currentGuess += key;
+      currentState += 'x';
     }
   }
 
@@ -74,13 +86,23 @@
       <div class="row" class:current>
         {#each Array.from(Array(5).keys()) as column (column)}
           {@const guess = current ? currentGuess : data.guesses[row]}
-          {@const state = data.states[row]?.[column] || 'x'}
+          {@const states = current ? currentState : data.states[row]}
+          {@const state = states?.[column] ?? 'x'}
           {@const value = guess?.[column] ?? ''}
           {@const selected = current && column === guess.length}
           {@const exact = state === '+'}
           {@const close = state === '/'}
           {@const missing = state === 'x'}
-          <div class="letter" class:close class:exact class:missing class:selected>
+          <button
+            class="letter"
+            class:close
+            class:exact
+            class:missing
+            class:selected
+            data-key="guess-{column}"
+            disabled={!current || value == ''}
+            on:click|preventDefault={update}
+          >
             {value}
             <span class="visually-hidden">
               {#if exact}
@@ -93,36 +115,30 @@
                 empty
               {/if}
             </span>
-            <input name="guess" disabled={!current} type="hidden" {value} />
-          </div>
+            <input name="guess" disabled={value == ''} type="hidden" {value} />
+            <input name="state" disabled={value == ''} type="hidden" value={state} />
+          </button>
         {/each}
       </div>
     {/each}
   </div>
   <div class="controls">
     <div class="keyboard">
-      <button class:selected={submittable} data-key="enter" disabled={!submittable}>submit</button>
+      <button class:selected={submittable} data-key="enter" disabled={!submittable}> submit </button>
 
       <button name="key" data-key="backspace" formaction="?/update" value="backspace" on:click|preventDefault={update}> back </button>
 
       {#each ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'] as row}
         <div class="row">
           {#each row as letter}
-            <button
-              name="key"
-              aria-label="{letter} {''}"
-              data-key={letter}
-              disabled={submittable}
-              formaction="?/update"
-              value={letter}
-              on:click|preventDefault={update}
-            >
+            <button name="key" aria-label="{letter} {''}" data-key={letter} formaction="?/update" value={letter} on:click|preventDefault={update}>
               {letter}
             </button>
           {/each}
         </div>
       {/each}
     </div>
+    <button class="restart selected" data-key="restart" formaction="?/restart"> Restart? </button>
   </div>
 </form>
 
@@ -251,5 +267,20 @@
 
   .keyboard button[data-key='enter']:disabled {
     opacity: 0.5;
+  }
+
+  .restart {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    border: none;
+  }
+
+  .restart:focus,
+  .restart:hover {
+    background: var(--color-theme-1);
+    color: white;
+    outline: none;
   }
 </style>
