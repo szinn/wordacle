@@ -39,6 +39,11 @@ tasks:
       - npm run format
       - npm run lint
 
+  fix:
+    desc: Fix lint warnings
+    cmds:
+      - npm run lint -- --fix
+
   dev:
     desc: Run development server
     cmds:
