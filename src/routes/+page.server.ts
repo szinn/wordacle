@@ -15,10 +15,12 @@ export const actions = {
     const query = new Query(cookies.get('wordacle'));
 
     const data = await request.formData();
-    const guess = data.getAll('guess') as string[];
-    const state = data.getAll('state') as string[];
-    console.log('got guesses', guess);
-    console.log('got states', state);
+    const guesses = data.getAll('guess') as string[];
+    const states = data.getAll('state') as string[];
+    console.log('got guesses', guesses);
+    console.log('got states', states);
+
+    query.apply(guesses, states);
 
     cookies.set('wordacle', query.toString(), { path: '/' });
   },
