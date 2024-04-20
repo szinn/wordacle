@@ -69,13 +69,11 @@ export class Query {
     }
 
     const initialRegex = '[' + candidates.join('][') + ']';
-
-    console.log('Candidates', candidates);
-    console.log('Regex', initialRegex);
+    const regex = new RegExp(initialRegex);
 
     let matches = [];
     for (let i = 0; i < words.length; i += 1) {
-      if (words[i].match(initialRegex)) {
+      if (regex.test(words[i])) {
         matches.push(words[i]);
       }
     }
@@ -86,8 +84,9 @@ export class Query {
 
       for (let j = 0; j < 5; j += 1) {
         if (states[i * 5 + j] == '/') {
+          const regex = new RegExp('.*' + guesses[i * 5 + j] + '.*');
           for (let k = 0; k < prevMatches.length; k += 1) {
-            if (prevMatches[k].match('.*' + guesses[i * 5 + j] + '.*')) {
+            if (regex.test(prevMatches[k])) {
               matches.push(prevMatches[k]);
             }
           }
