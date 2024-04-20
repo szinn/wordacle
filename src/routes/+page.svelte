@@ -80,7 +80,7 @@
   }}
 >
   <div class="grid" class:playing={1}>
-    {#each Array.from(Array(4).keys()) as row (row)}
+    {#each Array.from(Array(5).keys()) as row (row)}
       {@const current = row === index}
       <h2 class="visually-hidden">Row {row + 1}</h2>
       <div class="row" class:current>

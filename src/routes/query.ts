@@ -53,19 +53,26 @@ export class Query {
     ];
 
     // Remove not present letters and mark must be present
+    let misplaced = '';
+    for (let i = 0; i < guesses.length; i += 1) {
+      if (states[i] == '/') {
+        misplaced += guesses[i];
+      }
+    }
     for (let i = 0; i < guesses.length; i += 1) {
       const index = i % 5;
 
       if (states[i] == 'x') {
         for (let j = 0; j < 5; j += 1) {
-          candidates[j] = removeLetter(candidates[j], guesses[i]);
+          if (candidates[j] != guesses[i] && misplaced.indexOf(guesses[i]) == -1) {
+            candidates[j] = removeLetter(candidates[j], guesses[i]);
+          }
         }
       } else if (states[i] == '+') {
         candidates[index] = guesses[i];
       } else {
         candidates[index] = removeLetter(candidates[index], guesses[i]);
       }
-      console.log('Candidates', candidates);
     }
 
     const initialRegex = '[' + candidates.join('][') + ']';
@@ -84,7 +91,21 @@ export class Query {
 
       for (let j = 0; j < 5; j += 1) {
         if (states[i * 5 + j] == '/') {
-          const regex = new RegExp('.*' + guesses[i * 5 + j] + '.*');
+          let pattern = '';
+          for (let k = 0; k < 5; k += 1) {
+            if (k != j && states[i * 5 + k] != '+') {
+              pattern += '(^';
+              for (let l = 0; l < 5; l += 1) {
+                if (k == l) {
+                  pattern += guesses[i * 5 + j];
+                } else {
+                  pattern += '.';
+                }
+              }
+              pattern += ')|';
+            }
+          }
+          const regex = new RegExp(pattern.slice(0, -1));
           for (let k = 0; k < prevMatches.length; k += 1) {
             if (regex.test(prevMatches[k])) {
               matches.push(prevMatches[k]);
