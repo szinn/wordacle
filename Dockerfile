@@ -1,4 +1,4 @@
-FROM node:21@sha256:ff9d96004d63e65fe480ed19a642106eafa2c8ea3952f079f45307c2cb5d6bf2 AS build
+FROM node:21@sha256:bda531283f4bafd1cb41294493de89ae3c4cf55933da14710e46df970e77365e AS build
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY . .
 RUN npm run build
 RUN npm prune --production --force
 
-FROM node:21@sha256:ff9d96004d63e65fe480ed19a642106eafa2c8ea3952f079f45307c2cb5d6bf2 AS run
+FROM node:21@sha256:bda531283f4bafd1cb41294493de89ae3c4cf55933da14710e46df970e77365e AS run
 
 ENV NODE_ENV=production
 
