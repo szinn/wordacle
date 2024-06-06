@@ -7,23 +7,32 @@ export class Query {
   // +: present, right location
   states: string[];
 
+  matches: string[];
+
   constructor(serialized: string | undefined = undefined) {
     if (serialized) {
       const [guesses, states] = serialized.split('-');
 
       this.guesses = guesses ? guesses.split(' ') : [];
       this.states = states ? states.split(' ') : [];
+      this.matches = [];
     } else {
       this.guesses = [];
       this.states = [];
+      this.matches = [];
     }
   }
 
-  update(guesses: string[], states: string[]) {
+  update(guesses: string[], states: string[], matches: string[]) {
     const guessCount = guesses.length / 5;
 
     this.guesses = [];
     this.states = [];
+    if (matches.length < 50) {
+      this.matches = matches;
+    } else {
+      this.matches = ['More', 'than', '50', 'words', 'match'];
+    }
 
     for (let i = 0; i < guessCount; i += 1) {
       let guess = '';
@@ -120,7 +129,7 @@ export class Query {
     console.log('Found ', matches.length, 'words');
     console.log('Matches: ', matches);
 
-    this.update(guesses, states);
+    this.update(guesses, states, matches);
   }
 
   /**
@@ -128,7 +137,7 @@ export class Query {
    * @returns {string} The query encoded in a string
    */
   toString(): string {
-    return `${this.guesses.join(' ')}-${this.states.join(' ')}`;
+    return `${this.guesses.join(' ')}-${this.states.join(' ')}-${this.matches.join(' ')}`;
   }
 }
 

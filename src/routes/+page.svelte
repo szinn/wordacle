@@ -16,6 +16,7 @@
 
   $: currentGuess = data.guesses[index] || '';
   $: currentState = data.states[index] || '';
+  $: currentMatches = data.matches || '';
   $: submittable = (index > 0 && currentGuess.length == 0) || currentGuess.length === 5;
 
   /**
@@ -139,6 +140,9 @@
       {/each}
     </div>
     <button class="restart selected" data-key="restart" formaction="?/restart"> Restart? </button>
+  </div>
+  <div class="hints">
+    {currentMatches}
   </div>
 </form>
 
@@ -282,5 +286,13 @@
     background: var(--color-theme-1);
     color: white;
     outline: none;
+  }
+
+  .hints {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    border: none;
   }
 </style>

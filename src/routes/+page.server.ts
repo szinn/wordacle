@@ -6,7 +6,8 @@ export const load = (({ cookies }) => {
 
   return {
     guesses: query.guesses,
-    states: query.states
+    states: query.states,
+    matches: query.matches
   };
 }) satisfies PageServerLoad;
 
