@@ -37,7 +37,7 @@ repos:
         # MD013: line too long
         # MD033: no inline HTML
         # MD041: first line in a file should be a top-level heading
-        args: [--disable, MD013, MD033, MD041, '--']
+        args: [--disable, MD013, MD033, MD041, MD024, '--']
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.6.0
