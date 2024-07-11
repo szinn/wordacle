@@ -1,5 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>szinn/renovate-config"],
+  "extends": ["github>szinn/renovate-config", "github>szinn/wordacle//.github/renovate/allowedVersions.json5"],
   "ignorePaths": ["**/archive/**", "**/*.sops.*"]
 }
