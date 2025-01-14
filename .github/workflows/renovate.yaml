@@ -17,8 +17,8 @@ on: # yamllint disable-line rule:truthy
         description: Renovate version
         default: latest
         required: false
-  schedule:
-    - cron: '0 9,22 * * *'
+  # schedule:
+  #   - cron: '0 9,22 * * *'
   push:
     branches:
       - main
